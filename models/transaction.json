@@ -1,0 +1,15 @@
+{
+  "id": "trans-004a0415-39be-4adc-b617-7b8eacb5ce97",
+  "time": "",
+  "amount": "",
+  "userId": "",
+  "gameId": "",
+  "desription": "",
+  "stripe": {
+    "transactionId": "",
+    "cardId": "",
+    "customerId": ""
+  },
+  "timeCreated": "",
+  "timeModified": ""
+}

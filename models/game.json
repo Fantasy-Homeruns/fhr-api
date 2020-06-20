@@ -1,0 +1,28 @@
+{
+  "id": "game-004a0415-39be-4adc-b617-7b8eacb5ce92",
+  "league": {
+    "id": "league-004a0415-39be-4adc-b617-7b8eacb5ce91",
+    "name": "Family Homerun Derby"
+  },
+  "time": "all",
+  "teams": [
+    {
+      "user": "user-004a0415-39be-4adc-b617-7b8eacb5ce97",
+      "teamName": "Marc Urbaitel",
+      "hrTot": "150",
+      "standing": "1",
+      "draftOrder": "1",
+      "picks": [
+        {
+          "player": {}, // Full player object with stats
+          "round": "1",
+          "active": "1",
+          "reentry": "",
+          "dropTime": ""
+        }
+      ]
+    }
+  ],
+  "timeCreated": "",
+  "timeModified": ""
+}

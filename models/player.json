@@ -1,0 +1,40 @@
+{
+  "id": "player-004a0415-39be-4adc-b617-7b8eacb5ce97",
+  "displayName": "",
+  "firstName": "",
+  "lastName": "",
+  "espnPlayerId": "",
+  "bats": "",
+  "throws": "",
+  "birthPlace": "",
+  "injury": "",
+  "injuryUpdated": "",
+  "seasons": [
+    {
+      "season": "2018",
+      "hrTot": "45",
+      "teams": [
+        {
+          "teamAbbr": "",
+          "team": "",
+          "jerseyNo": "",
+          "position": "",
+          "age": "",
+          "height": "",
+          "weight": "",
+          "salary": "",
+          "startDate": "",
+          "teamLeague": ""
+        },
+        "stats": [
+          {
+            "no": 1,
+            "date": "2018-09-01 09:00:00"
+          }
+        ]
+      ]
+    }
+  ],
+  "timeCreated": "",
+  "timeModified": ""
+}

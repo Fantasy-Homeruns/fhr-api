@@ -1,0 +1,24 @@
+{
+  "name": "fhr-api",
+  "version": "0.0.1",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha --recursive -u bdd -R list"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "aws-sdk-mock": "^4.3.0",
+    "chai": "^4.2.0",
+    "cheerio": "^1.0.0-rc.3",
+    "lodash": "^4.17.15",
+    "mocha": "^5.2.0",
+    "request-promise": "^4.2.5",
+    "serverless": "^1.55.1",
+    "serverless-domain-manager": "^3.3.0",
+    "serverless-iam-roles-per-function": "^2.0.2",
+    "serverless-plugin-include-dependencies": "^3.2.1",
+    "serverless-stack-output": "^0.2.3",
+    "slack-notify": "^0.1.7"
+  }
+}

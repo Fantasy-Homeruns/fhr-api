@@ -1,0 +1,95 @@
+service:
+  name: fhr-db-${self:custom.config.environment}
+
+frameworkVersion: ">=1.0.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: v1
+  region: ${self:custom.config.region}
+  stackName: ${self:service.name}-${self:provider.stage}
+
+custom:
+  name: fhr-db
+  config: ${file(../config/config.js)}
+
+resources:
+  Parameters:
+    Environment:
+      Type: String
+      Default: ${self:custom.config.environment}
+      Description: Long name for hosting environment
+    FhrTableName:
+      Type: String
+      Default: ${self:custom.config.db.fhr.name}
+      Description: Name of the Fhr dynamo table
+    FhrTableReadCapacity:
+      Type: String
+      Default: ${self:custom.config.db.fhr.readCap}
+      Description: Read capacity for the Fhr dynamo table
+    FhrTableWriteCapacity:
+      Type: String
+      Default: ${self:custom.config.db.fhr.writeCap}
+      Description: Write capacity for the Fhr dynamo table
+
+  Resources:
+    FhrTable:
+      Type: AWS::DynamoDB::Table
+      # Due to a limiation in CF, DeletionPolicy cannot be set from a CF Parameter
+      DeletionPolicy: ${self:custom.config.db.fhr.deletionPolicy}
+      Properties:
+        TableName:
+          Ref: FhrTableName
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
+            AttributeType: S
+          - AttributeName: data
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: data_pk_index
+            Projection:
+              ProjectionType: ALL
+            KeySchema:
+              - AttributeName: data
+                KeyType: HASH
+              - AttributeName: pk
+                KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+        Tags: &tags
+          - Key: environment
+            Value:
+              Ref: Environment
+          - Key: scope
+            Value: fhr-api
+          - Key: serverlessframework
+            Value: true
+
+  Outputs:
+    FhrTableName:
+      Value:
+        Ref: FhrTable
+      Export:
+        Name:
+          Fn::Join: [':', [Ref: AWS::StackName, FhrTableName]]
+    FhrTableArn:
+      Value:
+        Fn::GetAtt: [FhrTable, Arn]
+      Export:
+        Name:
+          Fn::Join: [':', [Ref: AWS::StackName, FhrTableArn]]
+    FhrTableStreamArn:
+      Value:
+        Fn::GetAtt: [FhrTable, StreamArn]
+      Export:
+        Name:
+          Fn::Join: [':', [Ref: AWS::StackName, FhrTableStreamArn]]

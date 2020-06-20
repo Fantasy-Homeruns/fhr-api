@@ -1,0 +1,93 @@
+{
+  "data": {
+    "attributes": {
+      "id": "game-004a0415-39be-4adc-b617-7b8eacb5ce97",
+      "league": {
+        "id": "league-e6937d26-5979-4b14-bbfd-122db22efca1",
+        "name": "Family HR Derby"
+      },
+      "time": "Season",
+      "season": 2019,
+      "teams": [
+        {
+          "user": {
+            "id": "user-6bd9e51c-9a2b-479e-a24b-053946bbb5dd",
+            "teamName": "Portland Bombers",
+            "role": "commissioner",
+            "email": "marc@urbaitel.com",
+            "first_name": "Marc",
+            "last_name": "Urbaitel"
+          },
+          "hrTot": 500,
+          "standing": "1st place",
+          "draftOrder": 1,
+          "picks": [
+            {
+              "player": {
+                "id": "player-96ac3aef-31e9-470b-851e-6b3408f63d76",
+                "displayName": "Strawberry D.",
+                "teamAbbr": "NYM",
+                "espnPlayerId": 1
+              },
+              "round": 1,
+              "hrTot": 40,
+              "active": 1,
+              "reentry": 0
+            },
+            {
+              "player": {
+                "id": "player-36ac3aef-31e9-470b-851e-6b3408f63d76",
+                "displayName": "Cespedes Y.",
+                "teamAbbr": "NYM",
+                "espnPlayerId": 1
+              },
+              "round": 2,
+              "hrTot": 65,
+              "active": 1,
+              "reentry": 0
+            }
+          ]
+        },
+        {
+          "user": {
+            "id": "user-1bd9e51c-9a2b-479e-a24b-053946bbb5dd",
+            "teamName": "Dingers",
+            "role": "owner",
+            "email": "dingers@urbaitel.com",
+            "first_name": "Dingers",
+            "last_name": "Blah"
+          },
+          "hrTot": 420,
+          "standing": "2nd place",
+          "draftOrder": 2,
+          "picks": [
+            {
+              "player": {
+                "id": "player-96ac3aef-31e9-470b-851e-6b3408f63d76",
+                "displayName": "Strawberry D.",
+                "teamAbbr": "NYM",
+                "espnPlayerId": 1
+              },
+              "round": 1,
+              "hrTot": 40,
+              "active": 1,
+              "reentry": 0
+            },
+            {
+              "player": {
+                "id": "player-36ac3aef-31e9-470b-851e-6b3408f63d76",
+                "displayName": "Cespedes Y.",
+                "teamAbbr": "NYM",
+                "espnPlayerId": 1
+              },
+              "round": 2,
+              "hrTot": 65,
+              "active": 1,
+              "reentry": 0
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

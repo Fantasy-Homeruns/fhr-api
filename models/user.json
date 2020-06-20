@@ -1,0 +1,19 @@
+{
+  "id": "user-004a0415-39be-4adc-b617-7b8eacb5ce97",
+  "role": "commissioner",
+  "email": "marc@urbaitel.com",
+  "firstName": "Marc",
+  "lastName": "Urbaitel",
+  "mobilePhone": "415-264-4600",
+  "mobileProvider": "T-Mobile",
+  "salt": "",
+  "password": "",
+  "notify": {
+    "mobile": "1",
+    "email": "1"
+  },
+  "credit": {
+    "stripeCustomerId": "",
+    "stripeCreditCardId": ""
+  }
+}

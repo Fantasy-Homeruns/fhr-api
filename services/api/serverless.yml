@@ -1,0 +1,123 @@
+service:
+  name: fhr-api-${self:custom.config.environment}
+
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: v1
+  region: ${self:custom.config.region}
+  stackName: ${self:service.name}-${self:provider.stage}
+  apiName: ${self:service.name}
+  endpointType: regional
+  resourcePolicy:
+    - Effect: Allow
+      Principal: "*"
+      Action: execute-api:Invoke
+      Resource:
+        - execute-api:/*/*/*
+  environment:
+    ENV: ${self:custom.config.environment}
+    REGION: {Ref: AWS::Region}
+    FHR_TABLE:
+      Fn::ImportValue: {Fn::Join: [':', [Ref: DatabaseStackName, FhrTableName]]}
+  tags:
+    environment: ${self:custom.config.environment}
+    scope: fhr-api
+    serverlessframework: true
+
+custom:
+  name: fhr-api
+  config: ${file(../config/config.js)}
+  dbStackName: fhr-db-${self:custom.config.environment}-${self:provider.stage}
+  output:
+    file: build/serverless-output.yml
+
+plugins:
+  - serverless-stack-output
+  - serverless-iam-roles-per-function
+
+package:
+  individually: true
+  include:
+    - node_modules/**
+  exclude:
+    - ./**
+
+functions:
+  create-league:
+    handler: league/create.create
+    name: ${self:service.name}-${self:provider.stage}-create-league
+    description: "Create a league"
+    events:
+      - http:
+          path: league
+          method: post
+          cors: true
+    package:
+      include:
+        - league/create.js
+    iamRoleStatementsName: ${self:functions.create-league.name}-lambda-role
+    iamRoleStatements:
+      - Effect: Allow
+        Action: &dynamo-write
+          - dynamodb:PutItem
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:GetItem
+        Resource: &dynamo-table-arns
+          - Fn::ImportValue: {Fn::Join: [':', [Ref: DatabaseStackName, FhrTableArn]]}
+  player-get:
+    handler: player/get.get
+    name: ${self:service.name}-${self:provider.stage}-player-get
+    description: "Get player by id"
+    events:
+      - http:
+          path: player/{id}
+          method: get
+          request:
+            parameters:
+              paths:
+                id: true
+          cors: true
+    package:
+      include:
+        - player/get.js
+        - ../lib/*.js
+    iamRoleStatementsName: ${self:functions.player-get.name}-lambda-role
+    iamRoleStatements:
+      - Effect: Allow
+        Action: *dynamo-write
+        Resource: *dynamo-table-arns
+  migrate:
+    handler: migrate/add.add
+    name: ${self:service.name}-${self:provider.stage}-migrate
+    description: "Migrate data"
+    events:
+      - http:
+          path: migrate
+          method: post
+          cors: true
+    package:
+      include:
+        - migrate/add.js
+    iamRoleStatementsName: ${self:functions.migrate.name}-lambda-role
+    iamRoleStatements:
+      - Effect: Allow
+        Action: *dynamo-write
+        Resource: *dynamo-table-arns
+resources:
+  Parameters:
+    Env:
+      Type: String
+      Default: ${self:custom.config.environment}
+      Description: Short name for hosting environment
+    Environment:
+      Type: String
+      Default: ${self:custom.config.environment}
+      Description: Long name for hosting environment
+    DatabaseStackName:
+      Type: String
+      Default: ${self:custom.dbStackName}
+      Description: Stack name of the database stack

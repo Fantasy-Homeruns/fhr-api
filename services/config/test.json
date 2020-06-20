@@ -1,0 +1,18 @@
+{
+    "account": "",
+    "region": "",
+    "environment": "test",
+    "api": {
+        "domainName": "",
+        "certificateId": "",
+        "hostedZoneId": ""
+    },
+    "db": {
+        "fhr": {
+            "name": "fhr-test",
+            "readCap": 1,
+            "writeCap": 1,
+            "deletionPolicy": "Delete"
+        }
+    }
+}
