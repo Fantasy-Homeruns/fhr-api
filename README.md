@@ -3,6 +3,8 @@
 
 Fantasy Homeruns is a not-for-profit baseball game that tracks one statistic, homeruns.  FHR is a season long game.   This repos is the new open source version of the API.  Recently in 2020, FHR decided to open source and collaborate with the community to build the next generation of FHR using serverless for API and latest React for the web application.
 
+Help us build the next generation software.  This API is a complete rewrite of the existing stack in production (which is currently a backend websockets Node server with MySQL as the datastore).  FHR has tools to migrate the data into the new API and a private repos that can update the homeruns in realtime fashion during the baseball season.   We need your help to build the API and integrate it with the new web application.
+
 ## Contribute
 We are very excited to collaborate with you.
 
