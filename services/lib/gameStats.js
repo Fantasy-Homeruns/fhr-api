@@ -29,7 +29,13 @@ let gameStats = {
       team.hrTot = 0;
       _.forEach(team.picks, (pick) => {
         if (pick.player && pick.player.hrTot > 0) {
-          team.hrTot += pick.player.hrTot;
+          if (game.allowRosterMoves === true && game.rosterMoveType === 'switch') {
+            if (!pick.dropTime) {
+              team.hrTot += pick.player.hrTot;
+            }
+          } else {
+            team.hrTot += pick.player.hrTot;
+          }
         }
       });
     });

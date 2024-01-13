@@ -1,0 +1,174 @@
+service:
+  name: fhr-tasks-${self:custom.config.environment}
+
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: v1
+  region: ${self:custom.config.region}
+  stackName: ${self:service.name}-${self:provider.stage}
+  environment:
+    ENV: ${self:custom.config.environment}
+    REGION: {Ref: AWS::Region}
+    FHR_TABLE:
+      Fn::ImportValue: {Fn::Join: [':', [Ref: DatabaseStackName, FhrTableName]]}
+  tags:
+    environment: ${self:custom.config.environment}
+    scope: fhr-tasks
+    serverlessframework: true
+
+custom:
+  name: fhr-tasks
+  config: ${file(../config/config.js)}
+  dbStackName: fhr-db-${self:custom.config.environment}-${self:provider.stage}
+  output:
+    file: build/serverless-output.yml
+
+plugins:
+  - serverless-stack-output
+  - serverless-iam-roles-per-function
+
+package:
+  individually: true
+  include:
+    - node_modules/**
+  exclude:
+    - ./**
+
+functions:
+  updateHR:
+    handler: tasks/updateHR.update
+    name: ${self:service.name}-${self:provider.stage}-update-hr
+    description: "Update homeruns"
+    package:
+      include:
+        - ../tasks/updateHR.js
+        - ../tasks/scrapeTools.js
+        - ../lib/*.js
+    iamRoleStatementsName: ${self:functions.updateHR.name}-lambda-role
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:custom.config.region}:*:*
+      - Effect: "Allow"
+        Action:
+          - "sqs:SendMessage"
+          - "sqs:GetQueueUrl"
+        Resource: arn:aws:sqs:${self:custom.config.region}:${self:custom.config.account}:FHR-UpdateAllGames-${self:custom.config.environment}
+    reservedConcurrency: 1
+
+  addPlayer:
+    handler: tasks/addPlayer.add
+    name: ${self:service.name}-${self:provider.stage}-add-player
+    description: "Add players"
+    package:
+      include:
+        - ../tasks/addPlayer.js
+        - ../lib/*.js
+    iamRoleStatementsName: ${self:functions.addPlayer.name}-lambda-role
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:custom.config.region}:*:*
+    reservedConcurrency: 10
+    events:
+      - sqs: arn:aws:sqs:${self:custom.config.region}:${self:custom.config.account}:FHR-AddPlayer-${self:custom.config.environment}
+
+  updateGame:
+    handler: tasks/updateGame.update
+    name: ${self:service.name}-${self:provider.stage}-update-game
+    description: "Update game with all players and recalculate game stats"
+    package:
+      include:
+        - ../tasks/updateGame.js
+        - ../lib/*.js
+    iamRoleStatementsName: ${self:functions.updateGame.name}-lambda-role
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:custom.config.region}:*:*
+    events:
+      - sqs:
+          arn: arn:aws:sqs:${self:custom.config.region}:${self:custom.config.account}:FHR-UpdateGame-${self:custom.config.environment}
+          batchSize: 1
+          reservedConcurrency: 1
+
+  updateAllGames:
+    handler: tasks/updateAllGames.update
+    name: ${self:service.name}-${self:provider.stage}-update-all-games
+    description: "Update all games players and recalculate game stats"
+    package:
+      include:
+        - ../tasks/updateAllGames.js
+        - ../lib/*.js
+    iamRoleStatementsName: ${self:functions.updateAllGames.name}-lambda-role
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:custom.config.region}:*:*
+    events:
+      - sqs:
+          arn: arn:aws:sqs:${self:custom.config.region}:${self:custom.config.account}:FHR-UpdateAllGames-${self:custom.config.environment}
+          batchSize: 1
+          reservedConcurrency: 1
+
+  syncGame:
+    handler: tasks/syncGame.sync
+    name: ${self:service.name}-${self:provider.stage}-sync-game
+    description: "Sync by updating all players in a game and recalc stats"
+    package:
+      include:
+        - ../tasks/syncGame.js
+        - ../lib/*.js
+    iamRoleStatementsName: ${self:functions.syncGame.name}-lambda-role
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:custom.config.region}:*:*
+      - Effect: "Allow"
+        Action:
+          - "sqs:SendMessage"
+          - "sqs:GetQueueUrl"
+        Resource: arn:aws:sqs:${self:custom.config.region}:${self:custom.config.account}:FHR-UpdateGame-${self:custom.config.environment}
+
+resources:
+  Parameters:
+    Env:
+      Type: String
+      Default: ${self:custom.config.environment}
+      Description: Short name for hosting environment
+    Environment:
+      Type: String
+      Default: ${self:custom.config.environment}
+      Description: Long name for hosting environment
+    DatabaseStackName:
+      Type: String
+      Default: ${self:custom.dbStackName}
+      Description: Stack name of the database stack

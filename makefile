@@ -50,6 +50,38 @@ api-remove:
 api: api-package api-deploy
 
 # -----------------------------------------------------------------------------
+# Tasks
+# -----------------------------------------------------------------------------
+tasks-package:
+	cd services/tasks && \
+	serverless package \
+		--package build \
+		--stage ${STAGE} \
+		--env ${FHR_ENV}
+
+tasks-deploy:
+	cd services/tasks && \
+	serverless deploy \
+		--package build \
+		--stage ${STAGE} \
+		--env ${FHR_ENV}
+
+tasks-update:
+	cd services/tasks && \
+	serverless deploy function \
+		--function ${FUNCTION} \
+		--stage ${STAGE} \
+		--env ${FHR_ENV}
+
+tasks-remove:
+	cd services/tasks && \
+	serverless remove \
+		--stage ${STAGE} \
+		--env ${FHR_ENV}
+
+tasks: tasks-package tasks-deploy
+
+# -----------------------------------------------------------------------------
 # Serverless Database
 # -----------------------------------------------------------------------------
 db-package:
@@ -89,21 +121,33 @@ sqs-add-player-remove:
 	cd services/sqs-add-player && \
 	serverless remove --stage ${STAGE} --env ${FHR_ENV}
 
-sqs-update-player-package:
-	cd services/sqs-update-player && \
+sqs-update-game-package:
+	cd services/sqs-update-game && \
 	serverless package --package build --stage ${STAGE} --env ${FHR_ENV}
 
-sqs-update-player-deploy:
-	cd services/sqs-update-player && \
+sqs-update-game-deploy:
+	cd services/sqs-update-game && \
 	serverless deploy --package build --stage ${STAGE} --env ${FHR_ENV}
 
-sqs-update-player-remove:
-	cd services/sqs-update-player && \
+sqs-update-game-remove:
+	cd services/sqs-update-game && \
 	serverless remove --stage ${STAGE} --env ${FHR_ENV}
 
-sqs: sqs-add-player-package sqs-add-player-deploy sqs-update-player-package sqs-update-player-deploy
+sqs-update-all-games-package:
+	cd services/sqs-update-all-games && \
+	serverless package --package build --stage ${STAGE} --env ${FHR_ENV}
 
-sqs-remove: sqs-add-player-remove sqs-update-player-remove
+sqs-update-all-games-deploy:
+	cd services/sqs-update-all-games && \
+	serverless deploy --package build --stage ${STAGE} --env ${FHR_ENV}
+
+sqs-update-all-games-remove:
+	cd services/sqs-update-all-games && \
+	serverless remove --stage ${STAGE} --env ${FHR_ENV}
+
+sqs: sqs-add-player-package sqs-add-player-deploy sqs-update-game-package sqs-update-game-deploy sqs-update-all-games-package sqs-update-all-games-deploy
+
+sqs-remove: sqs-add-player-remove sqs-update-game-remove sqs-update-all-games-remove
 
 # -----------------------------------------------------------------------------
 # Deployment

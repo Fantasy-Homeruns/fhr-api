@@ -5,6 +5,34 @@ const AWS = require('aws-sdk'); // eslint-disable-line import/no-extraneous-depe
 const stats = require('./playerStats');
 
 let player = {
+  getPlayerById: (id, callback) => {
+    if (!id) {
+      let err = { error: "Missing id" };
+      callback(err, null);
+      return;
+    }
+    let dynamoDb = new AWS.DynamoDB.DocumentClient();
+    var params = {
+      TableName: process.env.FHR_TABLE,
+      KeyConditionExpression:"#pk = :pkValue",
+      ExpressionAttributeNames: {
+          "#pk": "pk"
+      },
+      ExpressionAttributeValues: {
+          ":pkValue": 'player-' + id
+      }
+    };
+
+    dynamoDb.query(params, (err, data) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        callback(null, data.Items[0]);
+      }
+      return;
+    });
+  },
+
   getPlayerByEspnId: (id, callback) => {
     if (!id) {
       let err = { error: "Missing id" };
