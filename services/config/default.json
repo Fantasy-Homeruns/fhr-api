@@ -1,6 +1,6 @@
 {
-    "account": "576404071076",
-    "region": "us-west-2",
+    "account": "",
+    "region": "",
     "environment": "dev",
     "api": {
         "domainName": "",

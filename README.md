@@ -21,11 +21,11 @@ Encourage all to improve the tests we currently have!
 The API uses AWS for all managed services including API Gateway, Lambda, DynamoDB, SQS.   Standing up a development environment is simple and affordable (all of the services are based on volume and can be left online at no charge to you).
 
 Setup your config:
-* Create dev config: Copy services/config/default.json to dev.json
+* Create dev config: Copy services/config/default.json to services/config/dev-[name].json
 
 ## Deploy
 ```
-export FHR_ENV=dev
+export FHR_ENV=dev-[name]
 make deploy
 ```
 

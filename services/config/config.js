@@ -14,13 +14,8 @@ function getConfig(input) {
 
     const env = input.options.env;
 
-    if (env === 'prod' || env === 'stage') {
-        let file = path.resolve(`../config/${env}.json`);
-        return JSON.parse(fs.readFileSync(file));
-    }
-
-    let file = path.resolve('../config/default.json');
-    let envVars = JSON.parse(fs.readFileSync(file));
+    let file = path.resolve(`../config/${env}.json`);
+    return JSON.parse(fs.readFileSync(file));
 
     setDatabaseTableSuffix(env, envVars);
     setEnvironmentDomainName(env, envVars);
