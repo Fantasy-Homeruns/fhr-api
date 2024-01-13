@@ -10,7 +10,7 @@ node_modules
 build/
 
 # config
-services/config/*.json
+services/config/dev*
 
 # misc
 .DS_Store
