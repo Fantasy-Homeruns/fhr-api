@@ -1,5 +1,5 @@
 service:
-  name: fhr-sqs-update-player-${self:custom.config.environment}
+  name: fhr-sqs-update-game-${self:custom.config.environment}
 
 frameworkVersion: ">=1.1.0 <2.0.0"
 
@@ -19,4 +19,4 @@ resources:
     MyQueue:
       Type: "AWS::SQS::Queue"
       Properties:
-        QueueName: FHR-UpdatePlayer-${self:custom.config.environment}
+        QueueName: FHR-UpdateGame-${self:custom.config.environment}

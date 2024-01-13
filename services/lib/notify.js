@@ -1,7 +1,7 @@
 'use strict';
 
 const env = process.env.NODE_ENV || 'development';
-const slack = require('slack-notify')('https://fantasyhomeruns.slack.com/services/hooks/incoming-webhook?token=' + process.env.SLACK_WEBHOOK);
+const slack = require('slack-notify')('https://fantasyhomeruns.slack.com/services/hooks/incoming-webhook?token=dcvhgmgtdMYc8nvtIMpyLBks');
 
 let notify = {
   sendSlack(data) {

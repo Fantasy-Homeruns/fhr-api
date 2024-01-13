@@ -5,6 +5,29 @@ const AWS = require('aws-sdk'); // eslint-disable-line import/no-extraneous-depe
 const stats = require('./gameStats');
 
 let game = {
+  getOneGame: (id, callback) => {
+    let dynamoDb = new AWS.DynamoDB.DocumentClient();
+    var params = {
+      TableName: process.env.FHR_TABLE,
+      KeyConditionExpression:"#pk = :pkValue",
+      ExpressionAttributeNames: {
+          "#pk": "pk"
+      },
+      ExpressionAttributeValues: {
+          ":pkValue": 'game-' + id
+      }
+    };
+
+    dynamoDb.query(params, (err, data) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        callback(null, data.Items[0]);
+      }
+      return;
+    });
+  },
+
   getGames: (season, callback) => {
     if (!season) {
       let err = { error: "Missing season" };
@@ -50,36 +73,6 @@ let game = {
       }
       return;
     });
-  },
-
-  buildGame: (data) => {
-    return {
-      "pk": "game-" + data.id,
-      "sk": data.id,
-      "leagueId": data.leagueId
-    };
-  },
-
-  buildTeam: (data) => {
-    return {
-      "user": "user-" + data.userId,
-      "teamName": data.teamName,
-      "draftOrder": data.draftOrder,
-      "hrTot": 0,
-      "standing": 1
-    };
-  },
-
-  buildPick: (data) => {
-    return {
-      "playerId": "player-" + data.PlayerSeason.playerId,
-      "player": {},
-      "round": data.round,
-      "time": data.time,
-      "active": data.active,
-      "reentry": data.reentry,
-      "dropTime": data.dropTime
-    };
   }
 };
 

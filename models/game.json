@@ -1,5 +1,8 @@
 {
   "id": "game-004a0415-39be-4adc-b617-7b8eacb5ce92",
+  "season": 2019,
+  "allowRosterMoves": 1,
+  "rosterMoveType": "switch",
   "league": {
     "id": "league-004a0415-39be-4adc-b617-7b8eacb5ce91",
     "name": "Family Homerun Derby"
