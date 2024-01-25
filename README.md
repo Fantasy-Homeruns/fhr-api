@@ -25,7 +25,8 @@ Setup your config:
 
 ## Deploy
 ```
-export FHR_ENV=dev-[name]
+export FHR_ENV="devmarc"
+export FHR_REGION="us-west-2"
 make deploy
 ```
 

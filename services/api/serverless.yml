@@ -1,15 +1,16 @@
-service:
-  name: fhr-api-${self:custom.config.environment}
+service: fhr-api
 
-frameworkVersion: ">=1.1.0 <2.0.0"
+frameworkVersion: '3'
+
+configValidationMode: error
 
 provider:
   name: aws
-  runtime: nodejs10.x
+  runtime: nodejs20.x
   stage: v1
-  region: ${self:custom.config.region}
-  stackName: ${self:service.name}-${self:provider.stage}
-  apiName: ${self:service.name}
+  region: ${env:FHR_REGION}
+  stackName: fhr-api-${env:FHR_ENV}
+  apiName: fhr-api-${env:FHR_ENV}
   endpointType: regional
   resourcePolicy:
     - Effect: Allow
@@ -18,19 +19,18 @@ provider:
       Resource:
         - execute-api:/*/*/*
   environment:
-    ENV: ${self:custom.config.environment}
-    REGION: {Ref: AWS::Region}
+    ENV: ${env:FHR_ENV}
+    REGION: ${env:FHR_REGION}
     FHR_TABLE:
       Fn::ImportValue: {Fn::Join: [':', [Ref: DatabaseStackName, FhrTableName]]}
   tags:
-    environment: ${self:custom.config.environment}
+    environment: ${env:FHR_ENV}
     scope: fhr-api
     serverlessframework: true
 
 custom:
   name: fhr-api
-  config: ${file(../config/config.js)}
-  dbStackName: fhr-db-${self:custom.config.environment}-${self:provider.stage}
+  dbStackName: fhr-db-${env:FHR_ENV}
   output:
     file: build/serverless-output.yml
 
@@ -48,7 +48,7 @@ package:
 functions:
   create-league:
     handler: league/create.create
-    name: ${self:service.name}-${self:provider.stage}-create-league
+    name: fhr-api-${env:FHR_ENV}-create-league
     description: "Create a league"
     events:
       - http:
@@ -70,7 +70,7 @@ functions:
           - Fn::ImportValue: {Fn::Join: [':', [Ref: DatabaseStackName, FhrTableArn]]}
   player-get:
     handler: player/get.get
-    name: ${self:service.name}-${self:provider.stage}-player-get
+    name: fhr-api-${env:FHR_ENV}-player-get
     description: "Get player by id"
     events:
       - http:
@@ -92,7 +92,7 @@ functions:
         Resource: *dynamo-table-arns
   migrate:
     handler: migrate/add.add
-    name: ${self:service.name}-${self:provider.stage}-migrate
+    name: fhr-api-${env:FHR_ENV}-migrate
     description: "Migrate data"
     events:
       - http:
@@ -111,11 +111,11 @@ resources:
   Parameters:
     Env:
       Type: String
-      Default: ${self:custom.config.environment}
+      Default: ${env:FHR_ENV}
       Description: Short name for hosting environment
     Environment:
       Type: String
-      Default: ${self:custom.config.environment}
+      Default: ${env:FHR_ENV}
       Description: Long name for hosting environment
     DatabaseStackName:
       Type: String

@@ -1,22 +1,19 @@
-service:
-  name: fhr-sqs-add-player-${self:custom.config.environment}
+service: fhr-sqs-add-player
 
-frameworkVersion: ">=1.1.0 <2.0.0"
+frameworkVersion: '3'
+
+configValidationMode: error
 
 provider:
   name: aws
-  runtime: nodejs10.x
+  runtime: nodejs20.x
   stage: v1
-  region: ${self:custom.config.region}
-  stackName: ${self:service.name}-${self:provider.stage}
-
-custom:
-  name: fhr-sqs
-  config: ${file(../config/config.js)}
+  region: ${env:FHR_REGION}
+  stackName: ${env:FHR_ENV}
 
 resources:
   Resources:
     MyQueue:
       Type: "AWS::SQS::Queue"
       Properties:
-        QueueName: FHR-AddPlayer-${self:custom.config.environment}
+        QueueName: FHR-AddPlayer-${env:FHR_ENV}

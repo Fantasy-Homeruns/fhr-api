@@ -2,7 +2,7 @@
 # Defaults
 # -----------------------------------------------------------------------------
 AWS_CREDS := $(if $(AWS_CREDS),$(AWS_CREDS),~/.aws/credentials)
-STAGE := $(if $(STAGE),$(STAGE),v1)
+REGION := $(if $(REGION), $(REGION), 'us-west-2')
 FHR_ENV := $(if $(FHR_ENV),$(FHR_ENV),dev)
 
 # -----------------------------------------------------------------------------
@@ -10,42 +10,30 @@ FHR_ENV := $(if $(FHR_ENV),$(FHR_ENV),dev)
 # -----------------------------------------------------------------------------
 api-package:
 	cd services/api && \
-	serverless package \
-		--package build \
-		--stage ${STAGE} \
-		--env ${FHR_ENV}
+	sls package \
+		--package build
 
 api-create-domain:
 	cd services/api && \
-	serverless create_domain \
-		--stage ${STAGE} \
-		--env ${FHR_ENV}
+	sls create_domain
 
 api-deploy:
 	cd services/api && \
-	serverless deploy \
-		--package build \
-		--stage ${STAGE} \
-		--env ${FHR_ENV}
+	sls deploy \
+		--package build
 
 api-update:
 	cd services/api && \
-	serverless deploy function \
-		--function ${FUNCTION} \
-		--stage ${STAGE} \
-		--env ${FHR_ENV}
+	sls deploy function \
+		--function ${FUNCTION}
 
 api-delete-domain:
 	cd services/api && \
-	serverless delete_domain \
-		--stage ${STAGE} \
-		--env ${FHR_ENV}
+	sls delete_domain
 
 api-remove:
 	cd services/api && \
-	serverless remove \
-		--stage ${STAGE} \
-		--env ${FHR_ENV}
+	sls remove
 
 api: api-package api-deploy
 
@@ -54,96 +42,82 @@ api: api-package api-deploy
 # -----------------------------------------------------------------------------
 tasks-package:
 	cd services/tasks && \
-	serverless package \
-		--package build \
-		--stage ${STAGE} \
-		--env ${FHR_ENV}
+	sls package \
+		--package build
 
 tasks-deploy:
 	cd services/tasks && \
-	serverless deploy \
-		--package build \
-		--stage ${STAGE} \
-		--env ${FHR_ENV}
+	sls deploy \
+		--package build
 
 tasks-update:
 	cd services/tasks && \
-	serverless deploy function \
-		--function ${FUNCTION} \
-		--stage ${STAGE} \
-		--env ${FHR_ENV}
+	sls deploy function \
+		--function ${FUNCTION}
 
 tasks-remove:
 	cd services/tasks && \
-	serverless remove \
-		--stage ${STAGE} \
-		--env ${FHR_ENV}
+	sls remove
 
 tasks: tasks-package tasks-deploy
 
 # -----------------------------------------------------------------------------
-# Serverless Database
+# sls Database
 # -----------------------------------------------------------------------------
 db-package:
 	cd services/db && \
-	serverless package \
-		--package build \
-		--stage ${STAGE} \
-		--env ${FHR_ENV}
+	sls package \
+		--package build
 
 db-deploy:
 	cd services/db && \
-	serverless deploy \
-		--package build \
-		--stage ${STAGE} \
-		--env ${FHR_ENV}
+	sls deploy \
+		--package build
 
 db-remove:
 	cd services/db && \
-	serverless remove \
-		--stage ${STAGE} \
-		--env ${FHR_ENV}
+	sls remove
 
 db: db-package db-deploy
 
 # -----------------------------------------------------------------------------
-# Serverless SQS
+# sls SQS
 # -----------------------------------------------------------------------------
 sqs-add-player-package:
 	cd services/sqs-add-player && \
-	serverless package --package build --stage ${STAGE} --env ${FHR_ENV}
+	sls package --package build
 
 sqs-add-player-deploy:
 	cd services/sqs-add-player && \
-	serverless deploy --package build --stage ${STAGE} --env ${FHR_ENV}
+	sls deploy --package build
 
 sqs-add-player-remove:
 	cd services/sqs-add-player && \
-	serverless remove --stage ${STAGE} --env ${FHR_ENV}
+	sls remove
 
 sqs-update-game-package:
 	cd services/sqs-update-game && \
-	serverless package --package build --stage ${STAGE} --env ${FHR_ENV}
+	sls package
 
 sqs-update-game-deploy:
 	cd services/sqs-update-game && \
-	serverless deploy --package build --stage ${STAGE} --env ${FHR_ENV}
+	sls deploy --package build
 
 sqs-update-game-remove:
 	cd services/sqs-update-game && \
-	serverless remove --stage ${STAGE} --env ${FHR_ENV}
+	sls remove
 
 sqs-update-all-games-package:
 	cd services/sqs-update-all-games && \
-	serverless package --package build --stage ${STAGE} --env ${FHR_ENV}
+	sls package --package build
 
 sqs-update-all-games-deploy:
 	cd services/sqs-update-all-games && \
-	serverless deploy --package build --stage ${STAGE} --env ${FHR_ENV}
+	sls deploy --package build
 
 sqs-update-all-games-remove:
 	cd services/sqs-update-all-games && \
-	serverless remove --stage ${STAGE} --env ${FHR_ENV}
+	sls remove
 
 sqs: sqs-add-player-package sqs-add-player-deploy sqs-update-game-package sqs-update-game-deploy sqs-update-all-games-package sqs-update-all-games-deploy
 

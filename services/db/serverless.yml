@@ -1,43 +1,40 @@
-service:
-  name: fhr-db-${self:custom.config.environment}
+service: fhr-db
 
-frameworkVersion: ">=1.0.0 <2.0.0"
+frameworkVersion: '3'
+
+configValidationMode: error
 
 provider:
   name: aws
-  runtime: python3.7
+  runtime: python3.11
   stage: v1
-  region: ${self:custom.config.region}
-  stackName: ${self:service.name}-${self:provider.stage}
-
-custom:
-  name: fhr-db
-  config: ${file(../config/config.js)}
+  region: ${env:FHR_REGION}
+  stackName: ${env:FHR_ENV}
 
 resources:
   Parameters:
     Environment:
       Type: String
-      Default: ${self:custom.config.environment}
+      Default: ${env:FHR_ENV}
       Description: Long name for hosting environment
     FhrTableName:
       Type: String
-      Default: ${self:custom.config.db.fhr.name}
+      Default: fhr-${env:FHR_ENV}
       Description: Name of the Fhr dynamo table
     FhrTableReadCapacity:
       Type: String
-      Default: ${self:custom.config.db.fhr.readCap}
+      Default: 1
       Description: Read capacity for the Fhr dynamo table
     FhrTableWriteCapacity:
       Type: String
-      Default: ${self:custom.config.db.fhr.writeCap}
+      Default: 1
       Description: Write capacity for the Fhr dynamo table
 
   Resources:
     FhrTable:
       Type: AWS::DynamoDB::Table
       # Due to a limiation in CF, DeletionPolicy cannot be set from a CF Parameter
-      DeletionPolicy: ${self:custom.config.db.fhr.deletionPolicy}
+      DeletionPolicy: Delete
       Properties:
         TableName:
           Ref: FhrTableName
